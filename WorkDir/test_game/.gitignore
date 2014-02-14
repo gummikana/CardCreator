@@ -1,0 +1,8 @@
+#common filters
+playbacks/*.poro_plbk
+screenshots/*
+log.txt
+temptemp/
+
+*.exe
+
