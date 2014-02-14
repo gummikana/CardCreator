@@ -3,6 +3,8 @@
 #include <set>
 #include <sdl.h>
 
+#include <game_utils/tween/tween_utils.h>
+
 #include "component_framework/EntityManager.h"
 #include "component_framework/EventManager.h"
 #include "component_framework/gcomponents.h"
@@ -11,6 +13,8 @@
 #include "misc_utils/debug_layer.h"
 #include "misc_utils/config_ui.h"
 #include "misc_utils/simple_profiler.h"
+
+#include "global_data.h"
 
 //---------------------------------------------------------------------------------------
 
@@ -53,14 +57,19 @@ void CardCreatorApp::Init()
 	// ----- sprite containers ----
 
 	mSpriteContainer = new as::Sprite;
-	as::Sprite* temp = as::LoadSprite( "data/templates/poker-card.png" );	
-	mSpriteContainer->addChild( temp );
+
+	// -- create card crafting ---
+	as::Sprite* new_card = new as::Sprite;
+	mSpriteContainer->addChild( new_card );
+	GD.mSprite = new_card;
 }
 
 // ----------------------------------------------------------------------------
 
 void CardCreatorApp::Update( float dt )
 {
+	UpdateGTweens( dt );
+
 	if( mDebugLayer.get() ) 
 		mDebugLayer->Update( dt );
 

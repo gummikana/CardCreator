@@ -218,6 +218,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\Source\global_data.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\global_data.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\Source\main.cpp"
 				>
 			</File>

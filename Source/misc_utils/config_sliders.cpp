@@ -408,7 +408,7 @@ void ConfigSliders::Init()
 		addChild( mBackground );
 	}
 
-	MoveTo( types::vector2( 1024 - mBoxSize.x, 0 ) );
+	MoveTo( types::vector2( Poro()->GetGraphics()->GetInternalSize().x - mBoxSize.x, 0 ) );
 	ResizeBackground( mBoxSize.y );
 	CreateLine();
 	

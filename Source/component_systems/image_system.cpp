@@ -1,4 +1,5 @@
 #include "image_system.h"
+#include "../global_data.h"
 
 //-----------------------------------------------------------------------------
 
@@ -13,6 +14,8 @@ ImageSystem::ImageSystem( SGF::EventManager* eventManager, SGF::EntityManager* e
 
 void ImageSystem::RefreshComponent( SGF::Entity* e, ImageComponent* scomp )
 {
+	mSpriteContainer = GD.mSprite;
+
 	if( ( scomp->mSprite == NULL && scomp->image_file.empty() == false ) || 
 		( scomp->mSprite && scomp->mSprite->GetFilename() != scomp->image_file ) ) 
 	{

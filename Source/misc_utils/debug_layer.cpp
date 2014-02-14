@@ -160,6 +160,7 @@ void DebugLayer::CloseProfilerViewer()
 
 void DebugLayer::OnKeyDown( int key, poro::types::charset unicode )
 {
+
 	if( key == SDLK_ESCAPE ) Poro()->Exit();
 
 	// add some kind of debug key filtering
