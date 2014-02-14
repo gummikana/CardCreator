@@ -5,6 +5,7 @@
 GlobalData::GlobalData()
 {
 	mSprite = NULL;
+	isCrafting = true;
 }
 
 GlobalData::~GlobalData()

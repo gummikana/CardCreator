@@ -1381,6 +1381,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\Source\misc_utils\font_creator.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Source\misc_utils\font_creator.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\Source\misc_utils\metadata.cpp"
 					>
 				</File>
@@ -1552,6 +1560,10 @@
 					RelativePath="..\..\Source\components\image_component.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\Source\components\textheader_component.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="component_systems"
@@ -1562,6 +1574,14 @@
 				</File>
 				<File
 					RelativePath="..\..\Source\component_systems\image_system.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Source\component_systems\textheader_system.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Source\component_systems\textheader_system.h"
 					>
 				</File>
 			</Filter>

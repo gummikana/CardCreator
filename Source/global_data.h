@@ -19,6 +19,9 @@ public:
 
 	as::Sprite* mSprite;
 
+	// --
+	bool isCrafting;
+
 	// -- data related things ---
 	bool		HasData( const std::string& key_name ) const;
 	std::string GetData( const std::string& key_name );

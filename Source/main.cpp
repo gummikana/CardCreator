@@ -31,8 +31,8 @@ int main(int argc, char *argv[])
 		appconf.SetRandomSeed = ceng::SetRandomSeeds;
 		appconf.record_events = true;
 		
-		// appconf.do_a_playback = true;
-		// appconf.playback_file = "playbacks/120628-175222-playback-1492.poro_plbk";
+		appconf.do_a_playback = true;
+		appconf.playback_file = "playbacks/140214-175946-playback-8384.poro_plbk";
 
 		poro::RunPoro< CardCreatorApp >( appconf );
 	}

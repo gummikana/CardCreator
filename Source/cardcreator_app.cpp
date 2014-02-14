@@ -58,9 +58,22 @@ void CardCreatorApp::Init()
 
 	mSpriteContainer = new as::Sprite;
 
+	mCardContainer = new as::Sprite;
+	mOverlay = new as::Sprite;
+
 	// -- create card crafting ---
+	mSpriteContainer->addChild( mCardContainer );
+	mSpriteContainer->addChild( mOverlay );
+
+	mSpriteContainer->SetScale( 0.75f, 0.75f );
+
+	// -- overlay sprite
+	as::Sprite* overlay = as::LoadSprite( "data/templates/poker_overlay.png" );
+	mOverlay->addChild( overlay );
+
+
 	as::Sprite* new_card = new as::Sprite;
-	mSpriteContainer->addChild( new_card );
+	mCardContainer->addChild( new_card );
 	GD.mSprite = new_card;
 }
 
@@ -98,12 +111,44 @@ void CardCreatorApp::Draw( poro::IGraphics* graphics )
 
 // ----------------------------------------------------------------------------
 
+types::vector2 TransformMouseForSprite( as::Sprite* sprite, const types::vector2& mouse_pos )
+{
+	using namespace as;
+	std::vector< const DisplayObjectContainer* > parents;
+	sprite->getParentTree( parents );
+
+	as::types::xform xform;
+	for( int i = (int)parents.size() - 1; i > 0; --i )
+	{
+		cassert( parents[ i ] );
+		const Sprite* parent = dynamic_cast< const Sprite* >( parents[ i ] );
+		if( parent )
+			xform = ceng::math::Mul( xform, parent->GetXForm() );
+	}
+
+	// xform = ceng::math::Mul( xform, this->GetXForm() );
+
+	return ceng::math::MulT( xform, mouse_pos );
+}
+
 void CardCreatorApp::MouseMove(const poro::types::vec2& p)
 {
 }
 
 void CardCreatorApp::MouseButtonDown(const poro::types::vec2& p, int button)
 {
+	if( button == poro::Mouse::MOUSE_BUTTON_LEFT ) 
+	{
+		types::vector2 mouse_pos = TransformMouseForSprite( mCardContainer, types::vector2( p ) );
+		std::vector< as::Sprite* > sprites = mCardContainer->FindSpritesAtPoint( mouse_pos );
+		std::cout << "sprites.size()" << sprites.size() << std::endl;
+
+		/*SGF::Entity* e = mEntityManager->GetClosestEntity(types::vector2( p ));
+
+		if ( e != NULL )
+			mDebugLayer->SetEntity(e);
+			*/
+	}
 }
 
 void CardCreatorApp::MouseButtonUp(const poro::types::vec2& pos, int button)
@@ -111,3 +156,21 @@ void CardCreatorApp::MouseButtonUp(const poro::types::vec2& pos, int button)
 }
 
 //=============================================================================
+
+void CardCreatorApp::OnKeyDown( int key, poro::types::charset unicode )
+{
+	if( key == SDLK_0 ) 
+		mOverlay->SetAlpha( 0.f );
+	else if( key >= SDLK_1 && key <= SDLK_9 )
+	{
+		float value = ( ( key - SDLK_1 ) + 1 ) / 10.f;
+		mOverlay->SetAlpha( value );
+	}
+}
+
+void CardCreatorApp::OnKeyUp( int key, poro::types::charset unicode )
+{
+}
+
+//=============================================================================
+
