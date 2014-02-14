@@ -1537,6 +1537,26 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="components"
+				>
+				<File
+					RelativePath="..\..\Source\components\image_component.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="component_systems"
+				>
+				<File
+					RelativePath="..\..\Source\component_systems\image_system.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Source\component_systems\image_system.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"

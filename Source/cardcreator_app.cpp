@@ -3,6 +3,11 @@
 #include <set>
 #include <sdl.h>
 
+#include "component_framework/EntityManager.h"
+#include "component_framework/EventManager.h"
+#include "component_framework/gcomponents.h"
+#include "component_framework/SystemManager.h"
+
 #include "misc_utils/debug_layer.h"
 #include "misc_utils/config_ui.h"
 #include "misc_utils/simple_profiler.h"
@@ -34,7 +39,22 @@ void CardCreatorApp::Init()
 	DefaultApplication::Init();
 	Poro()->GetGraphics()->SetFillColor( poro::GetFColor( 0.15f, 0.15f, 0.15f, 1.f ) );
 
+
+	// --- components ----
+	GComponents::Init();
+	SGF::EventManager* mEventManager = GComponents::eventManager;
+	SGF::EntityManager* mEntityManager = GComponents::entityManager;
+
+	// -- debug stuff ---
+
 	mDebugLayer.reset( new DebugLayer );
+	mDebugLayer->SetManagers( mEventManager, mEntityManager );
+
+	// ----- sprite containers ----
+
+	mSpriteContainer = new as::Sprite;
+	as::Sprite* temp = as::LoadSprite( "data/templates/poker-card.png" );	
+	mSpriteContainer->addChild( temp );
 }
 
 // ----------------------------------------------------------------------------
@@ -48,12 +68,22 @@ void CardCreatorApp::Update( float dt )
 	if( Poro()->GetKeyboard()->IsKeyDown( SDLK_RIGHT ) ) camera_offset.x--;
 	if( Poro()->GetKeyboard()->IsKeyDown( SDLK_UP ) )	camera_offset.y++;
 	if( Poro()->GetKeyboard()->IsKeyDown( SDLK_DOWN ) )	camera_offset.y--;
+
+	if( mSpriteContainer )
+		mSpriteContainer->Update( dt );
+
+	SGF::SystemManager::GetSingletonPtr()->Process( dt );
 }
+
+// ----------------------------------------------------------------------------
 
 void CardCreatorApp::Draw( poro::IGraphics* graphics )
 {
 	if( mDebugLayer.get() ) 
 		mDebugLayer->Draw( graphics );
+
+	if( mSpriteContainer )
+		as::DrawSprite( mSpriteContainer, graphics );
 
 }
 

@@ -5,6 +5,7 @@
 #include <poro/default_application.h>
 
 class DebugLayer;
+namespace as { class Sprite; }
 
 class CardCreatorApp : public poro::DefaultApplication
 {
@@ -20,6 +21,7 @@ public:
 	virtual void MouseButtonUp(const poro::types::vec2& pos, int button);
 	virtual void MouseMove(const poro::types::vec2& p);
 
+	as::Sprite*	mSpriteContainer;
 	std::auto_ptr< DebugLayer >		mDebugLayer;
 };
 

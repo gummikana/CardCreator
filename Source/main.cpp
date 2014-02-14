@@ -13,8 +13,17 @@ int main(int argc, char *argv[])
 	{
 		poro::AppConfig appconf;
 		appconf.title = "CardCreator App";
-		appconf.window_w = 1024;
-		appconf.window_h = 768;
+		/*
+		appconf.internal_size_w = 2048;
+		appconf.internal_size_h = 1536;
+		appconf.window_w = 2048;
+		appconf.window_h = 1536;
+		*/
+
+		appconf.internal_size_w = 1536;
+		appconf.internal_size_h = 960;
+		appconf.window_w = 1536;
+		appconf.window_h = 960;
 
 		appconf.report_fps = 1;
 		appconf.framerate = 60;
