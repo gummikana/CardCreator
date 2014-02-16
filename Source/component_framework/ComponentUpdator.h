@@ -36,6 +36,8 @@ SYSTEM_REGISTER( ExampleSystem );
 
 // ------------
 */
+void SetComponentRefresh( bool refresh_always );
+bool GetComponentRefresh();
 
 
 template< class TComponentType, bool RefreshElements = false > 
@@ -79,7 +81,7 @@ public:
 		using namespace SGF;
 		ComponentMapper< TComponentType > cmap = manager->GetComponentList< TComponentType >( e );
 
-		bool refresh = false;
+		bool refresh = GetComponentRefresh();
 
 		// only update graphics every 64th frame ~ 1 per second
 		if( RefreshElements == true ) {
