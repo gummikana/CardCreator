@@ -76,7 +76,7 @@ void TextHeaderSystem::RefreshComponent( SGF::Entity* e, TextHeaderComponent* co
 void TextHeaderSystem::UpdateComponent( SGF::Entity* e, TextHeaderComponent* comp )
 {
 	// Initialize if it doesn't exist
-	if( comp->mSprite == NULL )
+	if( comp->mSprite == NULL || GD.isCrafting == false )
 		RefreshComponent( e, comp );
 
 	// set the transform

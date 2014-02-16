@@ -30,6 +30,15 @@ public:
 
 	// -----------
 
+	void DoAllTheCards();
+	void SaveTheCard( const std::string& filename );
+
+	// -----------
+
+	void UpdateStep();
+
+	// -----------
+
 	as::Sprite*	mSpriteContainer;
 	as::Sprite* mCardContainer;
 	as::Sprite* mOverlay;

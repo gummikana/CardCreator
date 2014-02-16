@@ -52,6 +52,9 @@ void ImageSystem::UpdateComponent( SGF::Entity* e, ImageComponent* comp )
 	if( comp->mSprite == NULL )
 		RefreshComponent( e, comp );
 
+	if( GD.isCrafting == false ) 
+		RefreshComponent( e, comp );
+
 	// set the transform
 	if( comp->mSprite ) 
 	{

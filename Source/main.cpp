@@ -20,10 +20,15 @@ int main(int argc, char *argv[])
 		appconf.window_h = 1536;
 		*/
 
-		appconf.internal_size_w = 1536;
-		appconf.internal_size_h = 960;
-		appconf.window_w = 1536;
-		appconf.window_h = 960;
+		//appconf.internal_size_w = 1536;
+		//appconf.internal_size_h = 960;
+		//appconf.window_w = 1536;
+		//appconf.window_h = 960;
+
+		appconf.internal_size_w = 1920 - 100;
+		appconf.internal_size_h = 1200 - 50;
+		appconf.window_w = 1920 - 100;
+		appconf.window_h = 1200 - 50;
 
 		appconf.report_fps = 1;
 		appconf.framerate = 60;
@@ -31,8 +36,8 @@ int main(int argc, char *argv[])
 		appconf.SetRandomSeed = ceng::SetRandomSeeds;
 		appconf.record_events = true;
 		
-		appconf.do_a_playback = true;
-		appconf.playback_file = "playbacks/140214-175946-playback-8384.poro_plbk";
+		/*appconf.do_a_playback = true;
+		appconf.playback_file = "playbacks/140214-175946-playback-8384.poro_plbk";*/
 
 		poro::RunPoro< CardCreatorApp >( appconf );
 	}

@@ -3,12 +3,14 @@
 #include <set>
 #include <sdl.h>
 
+#include <utils/filesystem/filesystem.h>
 #include <game_utils/tween/tween_utils.h>
 
 #include "component_framework/EntityManager.h"
 #include "component_framework/EventManager.h"
 #include "component_framework/gcomponents.h"
 #include "component_framework/SystemManager.h"
+#include "component_framework/ComponentUpdator.h"
 
 #include "misc_utils/debug_layer.h"
 #include "misc_utils/config_ui.h"
@@ -38,11 +40,37 @@ CardCreatorApp::CardCreatorApp()
 {
 }
 
+//-----------------------------------------------------------------------------
+
+void LoadCSVFile( const std::string& csv_file, std::vector< std::map< std::string, std::string > >& result )
+{
+	std::vector< std::string > input;
+	ceng::ReadFileToVector( csv_file, input );
+
+	if( input.empty() ) 
+		return;
+
+	std::vector< std::string > labels = ceng::StringSplit( ",", input[0] );
+	result.resize( input.size() - 1 );
+	for( std::size_t i = 1; i < input.size(); ++i )
+	{
+		std::vector< std::string > data = ceng::StringSplit( ",", input[i] );
+		for( std::size_t j = 0; j < data.size(); ++j )
+		{
+			result[ i - 1 ][ labels[j] ] = data[j];
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------
+
 void CardCreatorApp::Init()
 {
 	DefaultApplication::Init();
 	Poro()->GetGraphics()->SetFillColor( poro::GetFColor( 0.15f, 0.15f, 0.15f, 1.f ) );
 
+	// test
+	// LoadCSVFile( "data/nomoremeat.csv" );
 
 	// --- components ----
 	GComponents::Init();
@@ -65,7 +93,7 @@ void CardCreatorApp::Init()
 	mSpriteContainer->addChild( mCardContainer );
 	mSpriteContainer->addChild( mOverlay );
 
-	mSpriteContainer->SetScale( 0.75f, 0.75f );
+	mSpriteContainer->SetScale( 1.0f, 1.0f );
 
 	// -- overlay sprite
 	as::Sprite* overlay = as::LoadSprite( "data/templates/poker_overlay.png" );
@@ -166,10 +194,83 @@ void CardCreatorApp::OnKeyDown( int key, poro::types::charset unicode )
 		float value = ( ( key - SDLK_1 ) + 1 ) / 10.f;
 		mOverlay->SetAlpha( value );
 	}
+
+	if( key == SDLK_SPACE )
+		DoAllTheCards();
+		// SaveTheCard( "output/test_card.png" );
 }
 
 void CardCreatorApp::OnKeyUp( int key, poro::types::charset unicode )
 {
+}
+
+//=============================================================================
+
+void CardCreatorApp::DoAllTheCards()
+{
+	std::vector< std::map< std::string, std::string > > data_set;
+	LoadCSVFile( "data/nomoremeat.csv", data_set );
+
+	GD.isCrafting = false;
+
+	for( std::size_t i = 0; i < data_set.size(); ++i )
+	{
+		std::map< std::string, std::string >::iterator j;
+		for( j = data_set[i].begin(); j != data_set[i].end(); ++j )
+		{
+			GD.SetData( j->first, j->second );
+		}
+
+		// --- card data has been set
+		// disable overlay, set color to white
+		mOverlay->SetVisibility( 0 );
+		mOverlay->SetAlpha( 0 );
+		Poro()->GetGraphics()->SetFillColor( poro::GetFColor( 1, 1, 1, 1 ) );
+
+		UpdateStep();
+
+		// --- save the card
+
+		std::string name = data_set[i]["name"];
+		if( name.empty() ) 
+			name = ceng::CastToString( i );
+
+
+		SaveTheCard( "output/" + name + ".png" );
+
+		// put the count and the name into something
+
+		// ---
+	}
+
+	GD.isCrafting = true;
+	Poro()->GetGraphics()->SetFillColor( poro::GetFColor( 0.15f, 0.15f, 0.15f, 1.f ) );
+}
+
+
+
+void CardCreatorApp::SaveTheCard( const std::string& filename )
+{
+	Poro()->GetGraphics()->SaveScreenshot( filename, 0, 0, 825, 1125 );
+}
+
+//=============================================================================
+
+void CardCreatorApp::UpdateStep()
+{
+	for( int i = 0; i < 2; ++i )
+	{
+		float dt = 1.f / 60.f;
+
+		SetComponentRefresh( true );
+		SGF::SystemManager::GetSingletonPtr()->Process( dt );
+
+		Poro()->GetApplication()->Update( dt );
+
+		Poro()->GetGraphics()->BeginRendering();
+		Poro()->GetApplication()->Draw(Poro()->GetGraphics());
+		Poro()->GetGraphics()->EndRendering();
+	}
 }
 
 //=============================================================================
