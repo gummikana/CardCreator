@@ -16,7 +16,136 @@
 #include "misc_utils/config_ui.h"
 #include "misc_utils/simple_profiler.h"
 
+#include <utils/imagetoarray/imagetoarray.h>
+
 #include "global_data.h"
+
+//---------------------------------------------------------------------------------------
+template< class T >
+inline void SWAP_RED_AND_BLUE( T& color ) 
+{
+	T red = 0;
+	T blue = 0;
+
+	red = 0x00ff0000 & color;
+	blue = 0x000000ff & color;
+
+	red = red >> 16;
+	blue = blue << 16;
+
+
+	color = ( color & 0xff00ff00 ) | red | blue;
+}
+
+struct Page
+{
+	Page()
+	{
+		card_count = 0;
+		types::ivector2 pagesize( 2480, 3508 );
+		data.Resize( pagesize.x, pagesize.y );
+		data.SetEverythingTo( 0xFFFFFFFF );
+
+		size.Set( 707, 1005 );
+		border_buffer.Set( 2, 2 );
+
+		types::ivector2 start_pos = ( pagesize - 3 * ( size + border_buffer ) ) * 0.5f;
+
+		types::ivector2 pos = start_pos;
+		for( int y = 0; y < 3; ++y )
+		{
+			for( int x = 0; x < 3; ++x )
+			{
+				points.push_back( pos );
+				pos.x += size.x + border_buffer.x;
+			}
+
+			pos.x = start_pos.x;
+			pos.y += size.y + border_buffer.y;
+		}
+	}
+
+	void Clear()
+	{
+		card_count = 0;
+		data.SetEverythingTo( 0xFFFFFFFF );
+	}
+
+	ceng::CArray2D< Uint32 > data;
+	int card_count;
+	std::vector< types::ivector2 > points;
+	types::ivector2	 size;
+	types::ivector2 border_buffer;
+
+	void AddCardToPage( const ceng::CArray2D< Uint32 >& image )
+	{
+		types::ivector2 image_pos = ( types::ivector2( image.GetWidth(), image.GetHeight() ) - size ) * 0.5f;
+		types::ivector2 page_pos = points[ card_count ];	
+		for( int y = 0; y < size.y + border_buffer.y; ++y )
+		{
+			for( int x = 0; x < size.x + border_buffer.x; ++x )
+			{
+				if( x < size.x && y < size.y )
+				{
+					data.At( x + page_pos.x, y + page_pos.y ) = image.At( x + image_pos.x, y + image_pos.y );
+					SWAP_RED_AND_BLUE( data.At( x + page_pos.x, y + page_pos.y ) );
+				}
+				else
+				{
+					data.At( x + page_pos.x, y + page_pos.y ) = 0xFFe8e8e8;
+				}
+			}
+		}
+
+		card_count++;
+	}
+
+	bool IsFull() { if( card_count >= 9 ) return true; else return false; }
+};
+
+void LoadCSVFile( const std::string& csv_file, std::vector< std::map< std::string, std::string > >& result );
+
+void ParseCards( const std::string& filename )
+{
+	std::vector< std::map< std::string, std::string > > values;
+	LoadCSVFile( filename, values );
+
+
+
+	// void	LoadImage( const std::string& filename, ceng::CArray2D< poro::types::Uint32 >& out_array2d, bool include_alpha );
+
+	Page p;
+	int pagec = 0;
+	
+	for( std::size_t i = 0; i < values.size(); ++i )
+	{
+		int count = ceng::CastFromString< int >(values[i]["count"]);
+		std::string filename = values[i]["filename"];
+
+		if( filename.empty() ) 
+			continue;
+
+		ceng::CArray2D< poro::types::Uint32 > image;
+		LoadImage( filename, image, true );
+		for( int j = 0; j < count; ++j )
+		{
+			p.AddCardToPage( image );
+			if( p.IsFull() ) 
+			{
+				SaveImage( "output/test_case_" + ceng::CastToString( pagec ) + ".png", p.data );
+				pagec++;
+				p.Clear();
+			}
+		}
+	}
+
+	// last case
+	SaveImage( "output/test_case_" + ceng::CastToString( pagec ) + ".png", p.data );
+	pagec++;
+	p.Clear();
+
+}
+
 
 //---------------------------------------------------------------------------------------
 
@@ -68,6 +197,8 @@ void CardCreatorApp::Init()
 {
 	DefaultApplication::Init();
 	Poro()->GetGraphics()->SetFillColor( poro::GetFColor( 0.15f, 0.15f, 0.15f, 1.f ) );
+
+	ParseCards( "cards/list_of_files.txt" );
 
 	// test
 	// LoadCSVFile( "data/nomoremeat.csv" );

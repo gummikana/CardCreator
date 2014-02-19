@@ -1461,6 +1461,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\Source\component_framework\ComponentUpdator.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\Source\component_framework\ComponentUpdator.h"
 					>
 				</File>
