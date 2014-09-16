@@ -47,7 +47,7 @@ struct Page
 		data.SetEverythingTo( 0xFFFFFFFF );
 
 		size.Set( 707, 1005 );
-		border_buffer.Set( 2, 2 );
+		border_buffer.Set( 4, 4 );
 
 		types::ivector2 start_pos = ( pagesize - 3 * ( size + border_buffer ) ) * 0.5f;
 
@@ -81,11 +81,11 @@ struct Page
 	{
 		types::ivector2 image_pos = ( types::ivector2( image.GetWidth(), image.GetHeight() ) - size ) * 0.5f;
 		types::ivector2 page_pos = points[ card_count ];	
-		for( int y = 0; y < size.y + border_buffer.y; ++y )
+		for( int y = -border_buffer.y; y < size.y + border_buffer.y; ++y )
 		{
-			for( int x = 0; x < size.x + border_buffer.x; ++x )
+			for( int x = -border_buffer.x; x < size.x + border_buffer.x; ++x )
 			{
-				if( x < size.x && y < size.y )
+				if( x >= 0 && y >= 0 && x < size.x && y < size.y )
 				{
 					data.At( x + page_pos.x, y + page_pos.y ) = image.At( x + image_pos.x, y + image_pos.y );
 					SWAP_RED_AND_BLUE( data.At( x + page_pos.x, y + page_pos.y ) );
@@ -105,7 +105,7 @@ struct Page
 
 void LoadCSVFile( const std::string& csv_file, std::vector< std::map< std::string, std::string > >& result );
 
-void ParseCards( const std::string& filename )
+void ParseCards( const std::string& filename, const std::string& output_prefix = "output/test_case_" )
 {
 	std::vector< std::map< std::string, std::string > > values;
 	LoadCSVFile( filename, values );
@@ -127,20 +127,27 @@ void ParseCards( const std::string& filename )
 
 		ceng::CArray2D< poro::types::Uint32 > image;
 		LoadImage( filename, image, true );
-		for( int j = 0; j < count; ++j )
+		if( image.GetWidth() <= 0 || image.GetHeight() <= 0 )
 		{
-			p.AddCardToPage( image );
-			if( p.IsFull() ) 
+			std::cout << "Error couldn't load image: " << filename << std::endl;
+		}
+		else
+		{
+			for( int j = 0; j < count; ++j )
 			{
-				SaveImage( "output/test_case_" + ceng::CastToString( pagec ) + ".png", p.data );
-				pagec++;
-				p.Clear();
+				p.AddCardToPage( image );
+				if( p.IsFull() ) 
+				{
+					SaveImage( output_prefix + ceng::CastToString( pagec ) + ".png", p.data );
+					pagec++;
+					p.Clear();
+				}
 			}
 		}
 	}
 
 	// last case
-	SaveImage( "output/test_case_" + ceng::CastToString( pagec ) + ".png", p.data );
+	SaveImage( output_prefix + ceng::CastToString( pagec ) + ".png", p.data );
 	pagec++;
 	p.Clear();
 
@@ -198,8 +205,11 @@ void CardCreatorApp::Init()
 	DefaultApplication::Init();
 	Poro()->GetGraphics()->SetFillColor( poro::GetFColor( 0.15f, 0.15f, 0.15f, 1.f ) );
 
-	ParseCards( "cards/list_of_files.txt" );
+	// ParseCards( "zombie_game/combat_deck.txt", "zombie_game/output/combat_" );
+	ParseCards( "zombie_game/damage_deck.txt", "zombie_game/output/damage_" );
 
+	Poro()->Exit();
+	return;
 	// test
 	// LoadCSVFile( "data/nomoremeat.csv" );
 
