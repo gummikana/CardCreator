@@ -112,7 +112,8 @@ struct Page
 
 void LoadCSVFile( const std::string& csv_file, std::vector< std::map< std::string, std::string > >& result );
 
-void ParseCards( const std::string& filename, const std::string& output_prefix = "output/test_case_",  const types::ivector2& pixel_size, const types::ivector2& card_page_count ){
+void ParseCards( const std::string& filename, const std::string& output_prefix = "output/test_case_",  const types::ivector2& pixel_size = types::ivector2( 550, 550 ), const types::ivector2& card_page_count = types::ivector2( 4, 6 ) )
+{
 	std::vector< std::map< std::string, std::string > > values;
 	LoadCSVFile( filename, values );
 
