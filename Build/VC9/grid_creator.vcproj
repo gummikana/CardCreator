@@ -350,6 +350,30 @@
 								>
 							</File>
 						</Filter>
+						<Filter
+							Name="imagetoarray"
+							>
+							<File
+								RelativePath="..\..\poro\source\utils\imagetoarray\imagetoarray.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\..\poro\source\utils\imagetoarray\imagetoarray.h"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="pow2asssert"
+							>
+							<File
+								RelativePath="..\..\poro\source\utils\pow2assert\pow2assert.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\..\poro\source\utils\pow2assert\pow2assert.h"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 			</Filter>
