@@ -5,8 +5,6 @@
 #include <utils/filesystem/filesystem.h>
 #include "../misc_utils/font_creator.h"
 
-namespace 
-{
 
 std::string MakeSureFontExists( const std::string& ttf_file, int size )
 {
@@ -28,7 +26,6 @@ std::string MakeSureFontExists( const std::string& ttf_file, int size )
 	return xml_filename;
 }
 
-}
 
 TextHeaderSystem::TextHeaderSystem( SGF::EventManager* eventManager, SGF::EntityManager* entityManager ) :
 	ComponentUpdator( eventManager, entityManager )

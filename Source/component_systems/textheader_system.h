@@ -14,6 +14,7 @@
 // and implement
 // void HandleMessage( SGF::Entity* e, TestMessagesComponent* comp, Message_Test* message );
 
+std::string MakeSureFontExists( const std::string& ttf_file, int size );
 
 class TextHeaderSystem : public ComponentUpdator< TextHeaderComponent, true >
 {
