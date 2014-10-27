@@ -52,7 +52,7 @@ struct Page
 		data.SetEverythingTo( 0xFFFFFFFF );
 
 		size.Set( pixel_size_x, pixel_size_y );
-		border_buffer.Set( 2, 2 );
+		border_buffer.Set( 4, 4 );
 
 		types::ivector2 start_pos =( pagesize - types::ivector2( card_count_x * ( size.x + border_buffer.x ), card_count_y * ( size.y + border_buffer.y ) ) );
 		start_pos.x *= 0.5f;
@@ -88,11 +88,11 @@ struct Page
 	{
 		types::ivector2 image_pos = ( types::ivector2( image.GetWidth(), image.GetHeight() ) - size ) * 0.5f;
 		types::ivector2 page_pos = points[ card_count ];	
-		for( int y = 0; y < size.y + border_buffer.y; ++y )
+		for( int y = -border_buffer.y; y < size.y + border_buffer.y; ++y )
 		{
-			for( int x = 0; x < size.x + border_buffer.x; ++x )
+			for( int x = -border_buffer.x; x < size.x + border_buffer.x; ++x )
 			{
-				if( x < size.x && y < size.y )
+				if( x >= 0 && y >= 0 && x < size.x && y < size.y )
 				{
 					data.At( x + page_pos.x, y + page_pos.y ) = image.At( x + image_pos.x, y + image_pos.y );
 					SWAP_RED_AND_BLUE( data.At( x + page_pos.x, y + page_pos.y ) );
@@ -112,8 +112,7 @@ struct Page
 
 void LoadCSVFile( const std::string& csv_file, std::vector< std::map< std::string, std::string > >& result );
 
-void ParseCards( const std::string& filename, const std::string& output_filename, const types::ivector2& pixel_size, const types::ivector2& card_page_count )
-{
+void ParseCards( const std::string& filename, const std::string& output_prefix = "output/test_case_",  const types::ivector2& pixel_size, const types::ivector2& card_page_count ){
 	std::vector< std::map< std::string, std::string > > values;
 	LoadCSVFile( filename, values );
 
@@ -135,20 +134,27 @@ void ParseCards( const std::string& filename, const std::string& output_filename
 
 		ceng::CArray2D< poro::types::Uint32 > image;
 		LoadImage( filename, image, true );
-		for( int j = 0; j < count; ++j )
+		if( image.GetWidth() <= 0 || image.GetHeight() <= 0 )
 		{
-			p.AddCardToPage( image );
-			if( p.IsFull() ) 
+			std::cout << "Error couldn't load image: " << filename << std::endl;
+		}
+		else
+		{
+			for( int j = 0; j < count; ++j )
 			{
-				SaveImage( output_filename + ceng::CastToString( pagec ) + ".png", p.data );
-				pagec++;
-				p.Clear();
+				p.AddCardToPage( image );
+				if( p.IsFull() ) 
+				{
+					SaveImage( output_prefix + ceng::CastToString( pagec ) + ".png", p.data );
+					pagec++;
+					p.Clear();
+				}
 			}
 		}
 	}
 
 	// last case
-	SaveImage( output_filename + ceng::CastToString( pagec ) + ".png", p.data );
+	SaveImage( output_prefix + ceng::CastToString( pagec ) + ".png", p.data );
 	pagec++;
 	p.Clear();
 
@@ -206,20 +212,12 @@ void CardCreatorApp::Init()
 	DefaultApplication::Init();
 	Poro()->GetGraphics()->SetFillColor( poro::GetFColor( 0.15f, 0.15f, 0.15f, 1.f ) );
 
-	// 550, 550 -> 4.6 cm
-	// 590, 590 -> 5.0 cm
-
-
-	ParseCards( "list_of_icons.txt", "output/icons_", types::ivector2( 220, 220 ), types::ivector2( 10, 14 ) );
-	// ParseCards( "transwormers_heads.txt", "output/transwormers_heads", types::ivector2( 590, 590 ), types::ivector2( 3, 5 ) );
-	// ParseCards( "transwormers_tiles.txt", "output/transwormers_tiles", types::ivector2( 550, 550 ), types::ivector2( 4, 6 ) );
-	// ParseCards( "space_cards.txt", "output/space_cards_", types::ivector2( 550, 550 ), types::ivector2( 4, 6 ) );
-	ParseCards( "empty_cards.txt", "output/empty_sheet_", types::ivector2( 709, 1007 ), types::ivector2( 3, 3 ) );
-	// ParseCards( "action_cards.txt", "output/action_cards_", types::ivector2( 550, 550 ), types::ivector2( 4, 6 ) );
-	// ParseCards( "cards/list_of_files.txt" );
+	// ParseCards( "zombie_game/combat_deck.txt", "zombie_game/output/combat_" );
+	ParseCards( "zombie_game/damage_deck.txt", "zombie_game/output/damage_" );
 
 	Poro()->Exit();
 	return;
+	// ParseCards( "space_cards.txt", "output/space_cards_", types::ivector2( 550, 550 ), types::ivector2( 4, 6 ) );
 	// test
 	// LoadCSVFile( "data/nomoremeat.csv" );
 
