@@ -7,6 +7,8 @@
 class DebugLayer;
 namespace as { class Sprite; }
 
+
+
 class CardCreatorApp : public poro::DefaultApplication
 {
 public:

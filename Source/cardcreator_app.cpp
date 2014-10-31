@@ -11,6 +11,7 @@
 #include "component_framework/gcomponents.h"
 #include "component_framework/SystemManager.h"
 #include "component_framework/ComponentUpdator.h"
+#include "component_framework/EntitySerializer.h"
 
 #include "misc_utils/debug_layer.h"
 #include "misc_utils/config_ui.h"
@@ -21,6 +22,23 @@
 #include "global_data.h"
 
 //---------------------------------------------------------------------------------------
+#ifdef WIN32
+#include <SDL_syswm.h>
+
+void MoveWindowTo( int x, int y )
+{
+	SDL_SysWMinfo i;
+	SDL_VERSION( &i.version );
+	if ( SDL_GetWMInfo ( &i) ) {
+		HWND hwnd = i.window;
+		SetWindowPos( hwnd, HWND_TOP, x, y,  0, 0,          // Ignores size arguments. 
+                 SWP_FRAMECHANGED );
+	}
+}
+#undef LoadImage
+#endif // WIN32
+
+
 template< class T >
 inline void SWAP_RED_AND_BLUE( T& color ) 
 {
@@ -214,10 +232,10 @@ void CardCreatorApp::Init()
 	Poro()->GetGraphics()->SetFillColor( poro::GetFColor( 0.15f, 0.15f, 0.15f, 1.f ) );
 
 	// ParseCards( "zombie_game/combat_deck.txt", "zombie_game/output/combat_" );
-	ParseCards( "zombie_game/damage_deck.txt", "zombie_game/output/damage_" );
+	/*ParseCards( "zombie_game/damage_deck.txt", "zombie_game/output/damage_" );
 
 	Poro()->Exit();
-	return;
+	return;*/
 	// ParseCards( "space_cards.txt", "output/space_cards_", types::ivector2( 550, 550 ), types::ivector2( 4, 6 ) );
 	// test
 	// LoadCSVFile( "data/nomoremeat.csv" );
@@ -253,6 +271,15 @@ void CardCreatorApp::Init()
 	as::Sprite* new_card = new as::Sprite;
 	mCardContainer->addChild( new_card );
 	GD.mSprite = new_card;
+
+	MoveWindowTo( 0, 0 );
+
+	LoadEntity( GD.GetConfig().entity_xml_file, mEntityManager );
+
+	if( GD.GetConfig().parse_automatically )
+	{
+		DoAllTheCards();
+	}
 }
 
 // ----------------------------------------------------------------------------
@@ -356,10 +383,11 @@ void CardCreatorApp::OnKeyUp( int key, poro::types::charset unicode )
 
 //=============================================================================
 
+
 void CardCreatorApp::DoAllTheCards()
 {
 	std::vector< std::map< std::string, std::string > > data_set;
-	LoadCSVFile( "data/nomoremeat.csv", data_set );
+	LoadCSVFile( GD.GetConfig().csv_file, data_set );
 
 	GD.isCrafting = false;
 
@@ -386,7 +414,7 @@ void CardCreatorApp::DoAllTheCards()
 			name = ceng::CastToString( i );
 
 
-		SaveTheCard( "output/" + name + ".png" );
+		SaveTheCard( GD.GetConfig().output_folder + name + ".png" );
 
 		// put the count and the name into something
 
@@ -401,7 +429,12 @@ void CardCreatorApp::DoAllTheCards()
 
 void CardCreatorApp::SaveTheCard( const std::string& filename )
 {
-	Poro()->GetGraphics()->SaveScreenshot( filename, 0, 0, 825, 1125 );
+	// this needs to be somewhere else...
+	// Poro()->GetGraphics()->SaveScreenshot( filename, 0, 0, 825, 1125 );
+	// hexes
+	// Poro()->GetGraphics()->SaveScreenshot( filename, 0, 0, 1200, 1050 );
+	Poro()->GetGraphics()->SaveScreenshot( filename, 0, 0, GD.GetConfig().screenshot_size.x, GD.GetConfig().screenshot_size.y );
+
 }
 
 //=============================================================================

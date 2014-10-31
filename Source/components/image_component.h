@@ -23,6 +23,7 @@
 	list_(float,							color_g,						1.f,							MetaData( 0.f, 1.f ) ) \
 	list_(float,							color_b,						1.f,							MetaData( 0.f, 1.f ) ) \
 	list_(int,								z_index,						-1,								MetaData( -1, 256 ) ) \
+	list_(bool,								combine_filenames,				false,							NULL ) \
 	list_(as::Sprite*,						mSprite,						NULL,							MetaPrivate() ) \
 
 

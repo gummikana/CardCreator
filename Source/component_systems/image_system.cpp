@@ -17,8 +17,14 @@ void ImageSystem::RefreshComponent( SGF::Entity* e, ImageComponent* scomp )
 	mSpriteContainer = GD.mSprite;
 
 	std::string image_file = scomp->image_file;
-	if( GD.isCrafting == false )
-		image_file = GD.GetData( scomp->key_name );
+	
+	if( GD.isCrafting == false && scomp->key_name.empty() == false )
+	{
+		if( scomp->combine_filenames ) 
+			image_file += GD.GetData( scomp->key_name ) + ".png";
+		else
+			image_file = GD.GetData( scomp->key_name );
+	}
 		
 
 	if( ( scomp->mSprite == NULL && image_file.empty() == false ) || 
