@@ -229,6 +229,10 @@
 				RelativePath="..\..\Source\main.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\Source\resize_image.h"
+				>
+			</File>
 			<Filter
 				Name="external"
 				>
