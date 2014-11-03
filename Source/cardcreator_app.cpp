@@ -19,6 +19,7 @@
 
 #include <utils/imagetoarray/imagetoarray.h>
 
+#include "resize_image.h"
 #include "global_data.h"
 
 //---------------------------------------------------------------------------------------
@@ -135,10 +136,7 @@ void ParseCards( const std::string& filename, const std::string& output_prefix =
 	std::vector< std::map< std::string, std::string > > values;
 	LoadCSVFile( filename, values );
 
-
-
 	// void	LoadImage( const std::string& filename, ceng::CArray2D< poro::types::Uint32 >& out_array2d, bool include_alpha );
-
 	Page p;
 	p.Init( pixel_size.x, pixel_size.y, card_page_count.x, card_page_count.y );
 	int pagec = 0;
@@ -153,12 +151,74 @@ void ParseCards( const std::string& filename, const std::string& output_prefix =
 
 		ceng::CArray2D< poro::types::Uint32 > image;
 		LoadImage( filename, image, true );
+
 		if( image.GetWidth() <= 0 || image.GetHeight() <= 0 )
 		{
 			std::cout << "Error couldn't load image: " << filename << std::endl;
 		}
 		else
 		{
+			for( int j = 0; j < count; ++j )
+			{
+				p.AddCardToPage( image );
+				if( p.IsFull() ) 
+				{
+					SaveImage( output_prefix + ceng::CastToString( pagec ) + ".png", p.data );
+					pagec++;
+					p.Clear();
+				}
+			}
+		}
+	}
+
+	// last case
+	SaveImage( output_prefix + ceng::CastToString( pagec ) + ".png", p.data );
+	pagec++;
+	p.Clear();
+
+}
+
+//
+
+void ParseCards( std::vector< std::string >& filenames, const std::string& output_prefix = "output/test_case_", 
+				const types::ivector2& pixel_size = types::ivector2( 550, 550 ), 
+				const types::ivector2& card_page_count = types::ivector2( 4, 6 ),
+				const types::ivector2& resize_size = types::ivector2( 550, 550 ),
+				int border_size = 3 )
+{
+
+	// void	LoadImage( const std::string& filename, ceng::CArray2D< poro::types::Uint32 >& out_array2d, bool include_alpha );
+
+	Page p;
+	p.Init( pixel_size.x, pixel_size.y, card_page_count.x, card_page_count.y );
+	p.border_buffer.Set( border_size, border_size );
+	int pagec = 0;
+	
+	for( std::size_t i = 0; i < filenames.size(); ++i )
+	{
+		int count = 1;
+		std::string filename = filenames[i];
+
+		if( filename.empty() ) 
+			continue;
+
+		ceng::CArray2D< poro::types::Uint32 > image;
+		LoadImage( filename, image, true );
+		if( image.GetWidth() <= 0 || image.GetHeight() <= 0 )
+		{
+			std::cout << "Error couldn't load image: " << filename << std::endl;
+		}
+		else
+		{
+			// if we need to resize
+			if( true )
+			{
+				ceng::CArray2D< poro::types::Uint32 > resized_image;
+				// 1095, 958 );
+				ImageResize( image, resized_image, resize_size.x, resize_size.y );
+				image = resized_image;
+			}
+
 			for( int j = 0; j < count; ++j )
 			{
 				p.AddCardToPage( image );
@@ -278,7 +338,18 @@ void CardCreatorApp::Init()
 
 	if( GD.GetConfig().parse_automatically )
 	{
-		DoAllTheCards();
+		std::vector< std::string > filenames = DoAllTheCards();
+
+		// 1095, 958 );
+		if( GD.GetConfig().create_grid )
+		{
+			ParseCards( filenames, 
+				GD.GetConfig().grid_output_prefix, 
+				GD.GetConfig().grid_single_image_size,  
+				GD.GetConfig().grid_number_on_page,  
+				GD.GetConfig().grid_single_image_resize,
+				GD.GetConfig().grid_border_size );
+		}
 	}
 }
 
@@ -383,9 +454,10 @@ void CardCreatorApp::OnKeyUp( int key, poro::types::charset unicode )
 
 //=============================================================================
 
-
-void CardCreatorApp::DoAllTheCards()
+// returns a list of filenames
+std::vector< std::string > CardCreatorApp::DoAllTheCards()
 {
+	std::vector< std::string > result;
 	std::vector< std::map< std::string, std::string > > data_set;
 	LoadCSVFile( GD.GetConfig().csv_file, data_set );
 
@@ -415,6 +487,7 @@ void CardCreatorApp::DoAllTheCards()
 
 
 		SaveTheCard( GD.GetConfig().output_folder + name + ".png" );
+		result.push_back( GD.GetConfig().output_folder + name + ".png" );
 
 		// put the count and the name into something
 
@@ -423,6 +496,7 @@ void CardCreatorApp::DoAllTheCards()
 
 	GD.isCrafting = true;
 	Poro()->GetGraphics()->SetFillColor( poro::GetFColor( 0.15f, 0.15f, 0.15f, 1.f ) );
+	return result;
 }
 
 

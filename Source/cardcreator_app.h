@@ -1,6 +1,7 @@
 #ifndef INC_CARD_CREATOR_APP_H
 #define INC_CARD_CREATOR_APP_H
 
+#include <vector>
 #include <memory>
 #include <poro/default_application.h>
 
@@ -32,7 +33,7 @@ public:
 
 	// -----------
 
-	void DoAllTheCards();
+	std::vector< std::string > DoAllTheCards();
 	void SaveTheCard( const std::string& filename );
 
 	// -----------

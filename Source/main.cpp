@@ -42,7 +42,8 @@ int main(int argc, char *argv[])
 
 	std::string config_file = GetArgumentParam( "-config", args, "config.xml" );
 	ceng::XmlLoadFromFile( GD.mConfigDo, config_file, "Config" );
-	ceng::XmlSaveToFile( GD.mConfigDo, config_file, "Config" );
+	// no need to save anything...
+	// ceng::XmlSaveToFile( GD.mConfigDo, config_file, "Config" );
 
 
 
