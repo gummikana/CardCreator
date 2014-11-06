@@ -16,7 +16,7 @@ namespace as { class Sprite; }
 
 struct ConfigDo
 {
-	ConfigDo() : parse_automatically( false ), output_folder("output/"), screenshot_size( 825, 1125 ), create_grid( false ), grid_border_size(4) { }
+	ConfigDo() : parse_automatically( false ), output_folder("output/"), screenshot_size( 825, 1125 ), create_grid( false ), grid_border_size(4), grid_rotate_90(false) { }
 
 	bool parse_automatically;
 	std::string entity_xml_file;
@@ -30,6 +30,7 @@ struct ConfigDo
 	types::ivector2 grid_single_image_size;
 	types::ivector2 grid_single_image_resize;
 	int grid_border_size;
+	bool grid_rotate_90;
 	
 	void Serialize( ceng::CXmlFileSys* filesys )
 	{
@@ -49,6 +50,7 @@ struct ConfigDo
 		XML_BindAttribute( filesys, grid_single_image_resize.x );
 		XML_BindAttribute( filesys, grid_single_image_resize.y );
 		XML_BindAttribute( filesys, grid_border_size );
+		XML_BindAttribute( filesys, grid_rotate_90 );
 
 	}
 };

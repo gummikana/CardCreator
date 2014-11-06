@@ -184,7 +184,8 @@ void ParseCards( std::vector< std::string >& filenames, const std::string& outpu
 				const types::ivector2& pixel_size = types::ivector2( 550, 550 ), 
 				const types::ivector2& card_page_count = types::ivector2( 4, 6 ),
 				const types::ivector2& resize_size = types::ivector2( 550, 550 ),
-				int border_size = 3 )
+				int border_size = 3,
+				bool rotate = false )
 {
 
 	// void	LoadImage( const std::string& filename, ceng::CArray2D< poro::types::Uint32 >& out_array2d, bool include_alpha );
@@ -210,6 +211,14 @@ void ParseCards( std::vector< std::string >& filenames, const std::string& outpu
 		}
 		else
 		{
+			// if we need to rotate
+			if( rotate )
+			{
+				ceng::CArray2D< poro::types::Uint32 > rotated_image;
+				ImageRotate90( image, rotated_image );
+				image = rotated_image;
+			}
+
 			// if we need to resize
 			if( true )
 			{
@@ -291,6 +300,9 @@ void CardCreatorApp::Init()
 	DefaultApplication::Init();
 	Poro()->GetGraphics()->SetFillColor( poro::GetFColor( 0.15f, 0.15f, 0.15f, 1.f ) );
 
+	/*ParseCards( "wizard_spell_deck.csv", "output/wizard_spells_", types::ivector2( 712, 1010 ), types::ivector2( 3, 3 ) );
+	Poro()->Exit();
+	return;*/
 	// ParseCards( "zombie_game/combat_deck.txt", "zombie_game/output/combat_" );
 	/*ParseCards( "zombie_game/damage_deck.txt", "zombie_game/output/damage_" );
 
@@ -348,7 +360,8 @@ void CardCreatorApp::Init()
 				GD.GetConfig().grid_single_image_size,  
 				GD.GetConfig().grid_number_on_page,  
 				GD.GetConfig().grid_single_image_resize,
-				GD.GetConfig().grid_border_size );
+				GD.GetConfig().grid_border_size,
+				GD.GetConfig().grid_rotate_90 );
 		}
 	}
 }
