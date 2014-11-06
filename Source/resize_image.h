@@ -275,3 +275,15 @@ void ImageResize( ceng::CArray2D< Uint32 >& orig_image, ceng::CArray2D< Uint32 >
 
 	_zoomSurfaceRGB( &surface_a, &surface_b, 0, 0, 1 );
 }
+
+void ImageRotate90( const ceng::CArray2D< Uint32 >& orig_image, ceng::CArray2D< Uint32 >& output_image )
+{
+	output_image.Resize( orig_image.GetHeight(), orig_image.GetWidth() );
+	for( int y = 0; y < orig_image.GetHeight(); ++y )
+	{
+		for( int x = 0; x < orig_image.GetWidth(); ++x )
+		{
+			output_image.At( y, x ) = orig_image.At( x, y );
+		}
+	}
+}
