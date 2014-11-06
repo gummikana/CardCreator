@@ -283,7 +283,7 @@ void ImageRotate90( const ceng::CArray2D< Uint32 >& orig_image, ceng::CArray2D< 
 	{
 		for( int x = 0; x < orig_image.GetWidth(); ++x )
 		{
-			output_image.At( y, x ) = orig_image.At( x, y );
+			output_image.At( output_image.GetWidth() - y, x ) = orig_image.At( x, y );
 		}
 	}
 }
