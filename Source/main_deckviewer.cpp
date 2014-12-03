@@ -5,6 +5,7 @@
 #include <utils/random/random.h>
 #include <tester/tester_console.h>
 #include <utils/vector_utils/vector_utils.h>
+#include <utils/string/string.h>
 #include "deckviewer_app.h"
 
 //-----------------------------------------------------------------------------
@@ -34,13 +35,13 @@ std::string GetArgumentParam( const std::string& argument_name, const std::vecto
 }
 //-----------------------------------------------------------------------------
 
+
 int main(int argc, char *argv[])
 {
 	std::vector< std::string > args = ceng::ArgsToVector( argc, argv );
 	RunTests();
 	// no need to save anything...
 	// ceng::XmlSaveToFile( GD.mConfigDo, config_file, "Config" );
-
 
 
 	{
