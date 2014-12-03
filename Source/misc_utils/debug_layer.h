@@ -24,6 +24,8 @@ public:
 	~DebugLayer();
 
 	void SetManagers( SGF::EventManager* eventMgr, SGF::EntityManager* entityMgr );
+	
+	void SetLoadEntity( bool enabled );
 
 	//-------------------------------------------------------------------------
 
@@ -89,8 +91,9 @@ private:
 	SGF::EntityManager* mEntityMgr;
 
 	// ----------
-
 	as::Sprite*		mDebugSprite;
+
+	bool mLoadEntityEnabled;
 	
 	ConfigSliders*	mConfigSliders;
 	float			mConfigSlidersSizeY;
@@ -108,5 +111,9 @@ private:
 };
 
 //-----------------------------------------------------------------------------
+
+inline void DebugLayer::SetLoadEntity( bool enabled ) {
+	mLoadEntityEnabled = enabled;
+}
 
 #endif

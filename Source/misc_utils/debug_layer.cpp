@@ -48,6 +48,7 @@ DebugLayer::DebugLayer( SGF::EventManager* eventMgr, SGF::EntityManager* entityM
 	mEventMgr( NULL ),
 	mEntityMgr( NULL ),
 	mDebugSprite( NULL ),
+	mLoadEntityEnabled( true ),
 	mConfigSliders( NULL ),
 	mConfigSlidersSizeY( 0 ),
 	mConfigScrollbar( NULL ),
@@ -173,26 +174,29 @@ void DebugLayer::OnKeyDown( int key, poro::types::charset unicode )
 			OpenProfilerViewer();
 	}
 
-#ifndef DEBUG_LAYER_DONT_USE_COMPONENTS
-	// saving the inspector 
-	if( key == SDLK_s && Poro()->GetKeyboard()->IsCtrlDown() && mInspectorEntity ) 
+	if( mLoadEntityEnabled )
 	{
-		std::string filename = SaveFileDialog( "data\\entities" );
-		if( filename.empty() == false ) 
-			SaveEntity( filename, mInspectorEntity, mEntityMgr );
-	}
-
-	if( key == SDLK_o && Poro()->GetKeyboard()->IsCtrlDown() )
-	{
-		std::string filename = LoadFileDialog( "data\\entities" );
-		// std::string filename = "data\\entities\\test_gun.xml";
-		if( filename.empty() == false ) {
-			mInspectorEntity = LoadEntity( filename, mEntityMgr );
-			mInspectorEntity->GetTransform()->position = mMousePositionInWorld;
-			RecreateInspector();
+	#ifndef DEBUG_LAYER_DONT_USE_COMPONENTS
+		// saving the inspector 
+		if( key == SDLK_s && Poro()->GetKeyboard()->IsCtrlDown() && mInspectorEntity ) 
+		{
+			std::string filename = SaveFileDialog( "data\\entities" );
+			if( filename.empty() == false ) 
+				SaveEntity( filename, mInspectorEntity, mEntityMgr );
 		}
+
+		if( key == SDLK_o && Poro()->GetKeyboard()->IsCtrlDown() )
+		{
+			std::string filename = LoadFileDialog( "data\\entities" );
+			// std::string filename = "data\\entities\\test_gun.xml";
+			if( filename.empty() == false ) {
+				mInspectorEntity = LoadEntity( filename, mEntityMgr );
+				mInspectorEntity->GetTransform()->position = mMousePositionInWorld;
+				RecreateInspector();
+			}
+		}
+	#endif
 	}
-#endif
 }
 //-----------------------------------------------------------------------------
 
