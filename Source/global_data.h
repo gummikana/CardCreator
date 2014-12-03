@@ -24,6 +24,8 @@ struct ConfigDo
 	std::string output_folder;
 	types::ivector2 screenshot_size;
 
+	std::string deck_output;
+
 	bool create_grid;
 	std::string grid_output_prefix;
 	types::ivector2 grid_number_on_page;
@@ -40,6 +42,8 @@ struct ConfigDo
 		XML_BindAttribute( filesys, output_folder );
 		XML_BindAttributeAlias( filesys, screenshot_size.x, "screenshot_size_width" );
 		XML_BindAttributeAlias( filesys, screenshot_size.y, "screenshot_size_height" );
+
+		XML_BindAttribute( filesys, deck_output );
 
 		XML_BindAttribute( filesys, create_grid );
 		XML_BindAttribute( filesys, grid_output_prefix );

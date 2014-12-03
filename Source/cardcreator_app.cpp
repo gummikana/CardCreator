@@ -352,6 +352,18 @@ void CardCreatorApp::Init()
 	{
 		std::vector< std::pair< std::string, int > > filenames = DoAllTheCards();
 
+		// write the filenames and card counts out
+		if( GD.GetConfig().deck_output.empty() == false )
+		{
+			// count,filename
+			std::fstream fout( GD.GetConfig().deck_output.c_str(), std::ios::out );
+			fout << "count,filename" << std::endl;
+			for( int i = 0; i < filenames.size(); ++i )
+			{
+				fout << filenames[i].second << "," << filenames[i].first << std::endl;
+			}
+		}
+
 		// 1095, 958 );
 		if( GD.GetConfig().create_grid )
 		{
