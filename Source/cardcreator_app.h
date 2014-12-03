@@ -33,7 +33,7 @@ public:
 
 	// -----------
 
-	std::vector< std::string > DoAllTheCards();
+	std::vector< std::pair< std::string, int > > DoAllTheCards();
 	void SaveTheCard( const std::string& filename );
 
 	// -----------

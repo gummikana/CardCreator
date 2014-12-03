@@ -63,7 +63,7 @@ struct Page
 	
 	}
 
-	void Init( int pixel_size_x, int pixel_size_y, int card_count_x, int card_count_y )
+	void Init( int pixel_size_x, int pixel_size_y, int card_count_x, int card_count_y, int border_size = 4 )
 	{
 		card_count = 0;
 		types::ivector2 pagesize( 2480, 3508 );
@@ -71,7 +71,7 @@ struct Page
 		data.SetEverythingTo( 0xFFFFFFFF );
 
 		size.Set( pixel_size_x, pixel_size_y );
-		border_buffer.Set( 4, 4 );
+		border_buffer.Set( border_size, border_size );
 
 		types::ivector2 start_pos =( pagesize - types::ivector2( card_count_x * ( size.x + border_buffer.x ), card_count_y * ( size.y + border_buffer.y ) ) );
 		start_pos.x *= 0.5f;
@@ -131,14 +131,14 @@ struct Page
 
 void LoadCSVFile( const std::string& csv_file, std::vector< std::map< std::string, std::string > >& result );
 
-void ParseCards( const std::string& filename, const std::string& output_prefix = "output/test_case_",  const types::ivector2& pixel_size = types::ivector2( 550, 550 ), const types::ivector2& card_page_count = types::ivector2( 4, 6 ) )
+void ParseCards( const std::string& filename, const std::string& output_prefix = "output/test_case_",  const types::ivector2& pixel_size = types::ivector2( 550, 550 ), const types::ivector2& card_page_count = types::ivector2( 4, 6 ), int border = 4 )
 {
 	std::vector< std::map< std::string, std::string > > values;
 	LoadCSVFile( filename, values );
 
 	// void	LoadImage( const std::string& filename, ceng::CArray2D< poro::types::Uint32 >& out_array2d, bool include_alpha );
 	Page p;
-	p.Init( pixel_size.x, pixel_size.y, card_page_count.x, card_page_count.y );
+	p.Init( pixel_size.x, pixel_size.y, card_page_count.x, card_page_count.y, border );
 	int pagec = 0;
 	
 	for( std::size_t i = 0; i < values.size(); ++i )
@@ -180,7 +180,7 @@ void ParseCards( const std::string& filename, const std::string& output_prefix =
 
 //
 
-void ParseCards( std::vector< std::string >& filenames, const std::string& output_prefix = "output/test_case_", 
+void ParseCards( std::vector< std::pair< std::string, int > >& filenames, const std::string& output_prefix = "output/test_case_", 
 				const types::ivector2& pixel_size = types::ivector2( 550, 550 ), 
 				const types::ivector2& card_page_count = types::ivector2( 4, 6 ),
 				const types::ivector2& resize_size = types::ivector2( 550, 550 ),
@@ -191,14 +191,13 @@ void ParseCards( std::vector< std::string >& filenames, const std::string& outpu
 	// void	LoadImage( const std::string& filename, ceng::CArray2D< poro::types::Uint32 >& out_array2d, bool include_alpha );
 
 	Page p;
-	p.Init( pixel_size.x, pixel_size.y, card_page_count.x, card_page_count.y );
-	p.border_buffer.Set( border_size, border_size );
+	p.Init( pixel_size.x, pixel_size.y, card_page_count.x, card_page_count.y, border_size );
 	int pagec = 0;
 	
 	for( std::size_t i = 0; i < filenames.size(); ++i )
 	{
-		int count = 1;
-		std::string filename = filenames[i];
+		int count = filenames[i].second;
+		std::string filename = filenames[i].first;
 
 		if( filename.empty() ) 
 			continue;
@@ -300,9 +299,9 @@ void CardCreatorApp::Init()
 	DefaultApplication::Init();
 	Poro()->GetGraphics()->SetFillColor( poro::GetFColor( 0.15f, 0.15f, 0.15f, 1.f ) );
 
-	/*ParseCards( "wizard_spell_deck.csv", "output/wizard_spells_", types::ivector2( 712, 1010 ), types::ivector2( 3, 3 ) );
+	ParseCards( "data/king/hexes.csv", "output/king_hex_", types::ivector2( 376, 326 ), types::ivector2( 6, 10 ), 0  );
 	Poro()->Exit();
-	return;*/
+	return;
 	// ParseCards( "zombie_game/combat_deck.txt", "zombie_game/output/combat_" );
 	/*ParseCards( "zombie_game/damage_deck.txt", "zombie_game/output/damage_" );
 
@@ -350,7 +349,7 @@ void CardCreatorApp::Init()
 
 	if( GD.GetConfig().parse_automatically )
 	{
-		std::vector< std::string > filenames = DoAllTheCards();
+		std::vector< std::pair< std::string, int > > filenames = DoAllTheCards();
 
 		// 1095, 958 );
 		if( GD.GetConfig().create_grid )
@@ -468,9 +467,9 @@ void CardCreatorApp::OnKeyUp( int key, poro::types::charset unicode )
 //=============================================================================
 
 // returns a list of filenames
-std::vector< std::string > CardCreatorApp::DoAllTheCards()
+std::vector< std::pair< std::string, int > > CardCreatorApp::DoAllTheCards()
 {
-	std::vector< std::string > result;
+	std::vector< std::pair< std::string, int > > result;
 	std::vector< std::map< std::string, std::string > > data_set;
 	LoadCSVFile( GD.GetConfig().csv_file, data_set );
 
@@ -479,9 +478,11 @@ std::vector< std::string > CardCreatorApp::DoAllTheCards()
 	for( std::size_t i = 0; i < data_set.size(); ++i )
 	{
 		std::map< std::string, std::string >::iterator j;
+		int number_of_cards = 1;
 		for( j = data_set[i].begin(); j != data_set[i].end(); ++j )
 		{
 			GD.SetData( j->first, j->second );
+			if( j->first == "number_of_cards" ) number_of_cards = ceng::CastFromString< int >( j->second );
 		}
 
 		// --- card data has been set
@@ -500,7 +501,9 @@ std::vector< std::string > CardCreatorApp::DoAllTheCards()
 
 
 		SaveTheCard( GD.GetConfig().output_folder + name + ".png" );
-		result.push_back( GD.GetConfig().output_folder + name + ".png" );
+
+
+		result.push_back( std::make_pair( GD.GetConfig().output_folder + name + ".png", number_of_cards ) );
 
 		// put the count and the name into something
 
