@@ -299,9 +299,10 @@ void CardCreatorApp::Init()
 	DefaultApplication::Init();
 	Poro()->GetGraphics()->SetFillColor( poro::GetFColor( 0.15f, 0.15f, 0.15f, 1.f ) );
 
-	ParseCards( "data/king/hexes.csv", "output/king_hex_", types::ivector2( 376, 326 ), types::ivector2( 6, 10 ), 0  );
+	/*ParseCards( "data/king/hexes.csv", "output/king_hex_", types::ivector2( 376, 326 ), types::ivector2( 6, 10 ), 0  );
 	Poro()->Exit();
-	return;
+	return;*/
+
 	// ParseCards( "zombie_game/combat_deck.txt", "zombie_game/output/combat_" );
 	/*ParseCards( "zombie_game/damage_deck.txt", "zombie_game/output/damage_" );
 
