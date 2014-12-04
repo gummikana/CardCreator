@@ -149,7 +149,8 @@ void DeckViewerApp::LoadDeck( const std::string& filename )
 	mDeckLoaded = filename;
 
 	// 
-	std::vector< std::string > m_deck;
+	std::string default_back =  "data/card_back.jpg";
+	std::vector< std::pair< std::string, std::string > > m_deck;
 
 	// load the file to m_deck
 	{
@@ -159,13 +160,15 @@ void DeckViewerApp::LoadDeck( const std::string& filename )
 		{
 			std::string filename = temp[i]["filename"];
 			std::string count = temp[i]["count"];
+			std::string back = temp[i]["back"];
+			if( back.empty() ) back = default_back;
 
 			if( filename.empty() == false && count.empty() == false )
 			{
 				int count_i = ceng::CastFromString< int >( count );
 				for( int j = 0; j < count_i; ++j )
 				{
-					m_deck.push_back( filename );
+					m_deck.push_back( std::make_pair( filename, back ) );
 				}
 			}
 		}
@@ -179,7 +182,7 @@ void DeckViewerApp::LoadDeck( const std::string& filename )
 	
 	for( std::size_t i = 0; i < m_deck.size(); ++i )
 	{
-		as::Sprite* card_sprite = LoadTwoSidedSprite( m_deck[i], "data/card_back.jpg" );
+		as::Sprite* card_sprite = LoadTwoSidedSprite( m_deck[i].first, m_deck[i].second );
 		card_sprite->SetCenterOffset( 0.5f * card_sprite->GetTextureSize() );
 		card_sprite->SetScale( sprite_scale, sprite_scale );
 		card_sprite->SetScaleX( -card_sprite->GetScaleX() );
