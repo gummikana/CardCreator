@@ -5,7 +5,8 @@
 #include <utils/random/random.h>
 #include <tester/tester_console.h>
 #include <utils/vector_utils/vector_utils.h>
-#include "deckviewer_app.h"
+#include "cardcreator_app.h"
+#include "global_data.h"
 
 //-----------------------------------------------------------------------------
 
@@ -38,6 +39,9 @@ int main(int argc, char *argv[])
 {
 	std::vector< std::string > args = ceng::ArgsToVector( argc, argv );
 	RunTests();
+
+	std::string config_file = GetArgumentParam( "-config", args, "config.xml" );
+	ceng::XmlLoadFromFile( GD.mConfigDo, config_file, "Config" );
 	// no need to save anything...
 	// ceng::XmlSaveToFile( GD.mConfigDo, config_file, "Config" );
 
@@ -45,12 +49,12 @@ int main(int argc, char *argv[])
 
 	{
 		poro::AppConfig appconf;
-		appconf.title = "Deck viewer App";
+		appconf.title = "CardCreator App";
 		
-		appconf.internal_size_w = 1024;
-		appconf.internal_size_h = 768;
-		appconf.window_w = 1024;
-		appconf.window_h = 768;
+		appconf.internal_size_w = 2048;
+		appconf.internal_size_h = 1536;
+		appconf.window_w = 2048;
+		appconf.window_h = 1536;
 		
 
 		/*appconf.internal_size_w = 1536;
@@ -73,7 +77,7 @@ int main(int argc, char *argv[])
 		/*appconf.do_a_playback = true;
 		appconf.playback_file = "playbacks/140214-175946-playback-8384.poro_plbk";*/
 
-		poro::RunPoro< DeckViewerApp >( appconf );
+		poro::RunPoro< CardCreatorApp >( appconf );
 	}
 
 	return 0;
