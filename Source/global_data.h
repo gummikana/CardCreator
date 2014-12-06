@@ -27,6 +27,7 @@ struct ConfigDo
 	std::string deck_output;
 
 	bool create_grid;
+	std::string create_grid_from_file;
 	std::string grid_output_prefix;
 	types::ivector2 grid_number_on_page;
 	types::ivector2 grid_single_image_size;
@@ -46,6 +47,7 @@ struct ConfigDo
 		XML_BindAttribute( filesys, deck_output );
 
 		XML_BindAttribute( filesys, create_grid );
+		XML_BindAttribute( filesys, create_grid_from_file );
 		XML_BindAttribute( filesys, grid_output_prefix );
 		XML_BindAttribute( filesys, grid_number_on_page.x );
 		XML_BindAttribute( filesys, grid_number_on_page.y );

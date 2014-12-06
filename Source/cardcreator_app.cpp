@@ -292,6 +292,23 @@ void LoadCSVFile( const std::string& csv_file, std::vector< std::map< std::strin
 	}
 }
 
+void LoadDeckFile( const std::string& csv_file, std::vector< std::pair< std::string, int > >& result )
+{
+	std::vector< std::map< std::string, std::string > > values;
+	LoadCSVFile( csv_file, values );
+
+	for( std::size_t i = 0; i < values.size(); ++i )
+	{
+		int count = 0;
+		if( values[i]["count"].empty() == false ) 
+			count = ceng::CastFromString< int >(values[i]["count"]);
+		std::string filename = values[i]["filename"];
+
+		if( filename.empty() == false && count > 0 )
+			result.push_back( std::make_pair( filename, count ) ) ;
+	}
+}
+
 //-----------------------------------------------------------------------------
 
 void CardCreatorApp::Init()
@@ -302,9 +319,10 @@ void CardCreatorApp::Init()
 	/*ParseCards( "data/king/hexes.csv", "output/king_hex_", types::ivector2( 376, 326 ), types::ivector2( 6, 10 ), 0  );
 	Poro()->Exit();
 	return;*/
+	
 
 	// ParseCards( "zombie_game/combat_deck.txt", "zombie_game/output/combat_" );
-	/*ParseCards( "zombie_game/damage_deck.txt", "zombie_game/output/damage_" );
+	/*ParseCards( "data/rebellion.txt", "output/king_", types::ivector2( 712, 1010 ), types::ivector2( 3, 3 ), 3  );
 
 	Poro()->Exit();
 	return;*/
@@ -375,6 +393,20 @@ void CardCreatorApp::Init()
 				GD.GetConfig().grid_border_size,
 				GD.GetConfig().grid_rotate_90 );
 		}
+	}
+
+	if( GD.GetConfig().create_grid_from_file.empty() == false )
+	{
+		std::vector< std::pair< std::string, int > > filenames;
+		LoadDeckFile( GD.GetConfig().create_grid_from_file, filenames );
+
+		ParseCards( filenames,
+				GD.GetConfig().grid_output_prefix, 
+				GD.GetConfig().grid_single_image_size,  
+				GD.GetConfig().grid_number_on_page,  
+				GD.GetConfig().grid_single_image_resize,
+				GD.GetConfig().grid_border_size,
+				GD.GetConfig().grid_rotate_90 );
 	}
 }
 
