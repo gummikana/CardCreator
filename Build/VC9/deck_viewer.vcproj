@@ -221,6 +221,14 @@
 				RelativePath="..\..\Source\main_deckviewer.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\..\Source\pilecreator_app.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Source\pilecreator_app.h"
+				>
+			</File>
 			<Filter
 				Name="external"
 				>
