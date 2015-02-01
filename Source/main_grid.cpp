@@ -287,8 +287,8 @@ int main(int argc, char *argv[])
 
 	GridParams gridparams;
 	gridparams.image_w = 2480;
-	gridparams.image_h = 3508;
-	gridparams.n = 100;
+	gridparams.image_h = 1024;
+	gridparams.n = 60;
 	gridparams.font = "data/fonts/arial.ttf";
 	gridparams.font_size = 64;
 	gridparams.background_color = 0xFFFFFFFF;

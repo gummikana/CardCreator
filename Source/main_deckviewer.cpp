@@ -7,6 +7,7 @@
 #include <utils/vector_utils/vector_utils.h>
 #include <utils/string/string.h>
 #include "deckviewer_app.h"
+#include "pilecreator_app.h"
 
 //-----------------------------------------------------------------------------
 
@@ -74,7 +75,8 @@ int main(int argc, char *argv[])
 		/*appconf.do_a_playback = true;
 		appconf.playback_file = "playbacks/140214-175946-playback-8384.poro_plbk";*/
 
-		poro::RunPoro< DeckViewerApp >( appconf );
+		// poro::RunPoro< DeckViewerApp >( appconf );
+		poro::RunPoro< PileCreatorApp >( appconf );
 	}
 
 	return 0;
